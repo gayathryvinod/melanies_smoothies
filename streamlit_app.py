@@ -34,5 +34,17 @@ if ingredients_list:
       
 # new section to display smoothfroot nutrition information 
 import requests  
-smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")  
-st.text(smoothiefroot_response)
+#smoothiefroot_response = requests.get("[https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon)")  
+#st.text(smoothiefroot_response)
+url = "https://my.smoothiefroot.com/api/fruit/watermelon"
+
+try:
+    smoothiefroot_response = requests.get(url)
+    
+    # Display the actual JSON data from the API
+    st.text(smoothiefroot_response.json())
+    
+except requests.exceptions.InvalidSchema:
+    st.error("The URL formatting is incorrect. Check for extra brackets or spaces.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
