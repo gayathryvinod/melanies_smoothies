@@ -29,7 +29,7 @@ if ingredients_list:
       json_data = response.json()
       # Reach INTO the 'nutritions' key and then transpose
       # Note: Check if your API uses 'nutritions' (plural) or 'nutrition' (singular)
-      df_nutritions = pd.DataFrame([json_data['nutritions']]).T
+      df_nutritions = pd.DataFrame([json_data['nutrition']]).T
 
       # Rename the column so it doesn't say '0'
       df_nutritions.columns = ['Value']
