@@ -35,7 +35,6 @@ if ingredients_list:
         st.success("Your Smoothie is ordered, " + name_on_order + "!", icon = "✅")
       
 # new section to display smoothfroot nutrition information 
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon").json()
-#st.text(smoothiefroot_response)
+smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
 sf_df = pd.DataFrame([smoothiefroot_response.json()]) 
 st.dataframe(sf_df)
