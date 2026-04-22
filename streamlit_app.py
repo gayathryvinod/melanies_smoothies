@@ -22,21 +22,23 @@ ingredients_list = st.multiselect('Choose upto 5 ingredients:', my_dataframe, ma
 if ingredients_list:
     ingredients_string = ''
 
+
     for fruit_chosen in ingredients_list:
       ingredients_string += fruit_chosen + ' '
       st.subheader(fruit_chosen + ' Nutritional Information')
       response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
-      sf_json = response.json()
-      nutrition_data = sf_json.get('nutrition')
-
-    if nutrition_data:
-        df_nutrition = pd.DataFrame([nutrition_data]).T
-        df_nutrition.columns = ['Value']
-        st.dataframe(df_nutrition, use_container_width=True)
-    else:
-        st.warning(f"No nutrition facts found for {fruit_chosen}.")
-
-
+      # Ensure we got a valid response before trying to display it
+      if response.status_code == 200:
+        sf_json = response.json()
+        nutrition_data = sf_json.get('nutrition')
+        if nutrition_data:
+            df_nutrition = pd.DataFrame([nutrition_data]).T
+            df_nutrition.columns = ['Value']
+            st.dataframe(df_nutrition, use_container_width=True)
+        else:
+            st.write(f"Nutrition data not available for {fruit_chosen}")
+      else:
+          st.error(f"Could not find data for {fruit_chosen}")
   
   
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order) values ('""" + ingredients_string + """', '"""+ name_on_order + """')"""
