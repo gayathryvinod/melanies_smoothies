@@ -21,13 +21,18 @@ ingredients_list = st.multiselect('Choose upto 5 ingredients:', my_dataframe, ma
 
 if ingredients_list:
     ingredients_string = ''
-    
+
     for fruit_chosen in ingredients_list:
-        ingredients_string += fruit_chosen + ' '
-        st.subheader(fruit_chosen + ' Nutritional Information')
-        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
-        sf_df = st.dataframe(data=pd.DataFrame([smoothiefroot_response.json()]).T, use_container_width = True)
-  # .T to transpose data for better nutritional info visibility 
+      st.subheader(fruit_chosen + ' Nutritional Information')
+      response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
+      json_data = response.json()
+      # Reach INTO the 'nutritions' key and then transpose
+      # Note: Check if your API uses 'nutritions' (plural) or 'nutrition' (singular)
+      df_nutritions = pd.DataFrame([json_data['nutritions']]).T
+
+      # Rename the column so it doesn't say '0'
+      df_nutritions.columns = ['Value']
+      st.dataframe(df_nutritions, use_container_width=True)
   
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order) values ('""" + ingredients_string + """', '"""+ name_on_order + """')"""
     #st.write(my_insert_stmt)
