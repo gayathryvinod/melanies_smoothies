@@ -51,9 +51,11 @@ if ingredients_list:
                 if nutrition_data and len(nutrition_data) > 0:
                     df_nutrition = pd.DataFrame([nutrition_data]).T
                     df_nutrition.columns = ['Value']
-                    st.dataframe(df_nutrition, use_container_width=True)
+                    st.dataframe(df_nutrition, use_container_width=False, 
+                                 column_config={"Value": st.column_config.NumberColumn(width="small"),
+                                                "_index": st.column_config.Column(width="medium")})
                 else:
-                    # Graceful handling for missing nutrition values
+                    # Handling for missing nutrition values
                     st.info(f"The API found '{fruit_chosen}', but no nutritional facts are currently listed.")
             else:
                 st.error(f"Could not find '{fruit_chosen}' in the API database.")
