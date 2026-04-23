@@ -32,12 +32,12 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
         
-        # Get the search key (e.g., 'Ximenia (Hog Plum)')
+        # Get the search key
         search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0] 
         
         if search_on:
-            st.subheader(f"{fruit_chosen} Nutritional Information")
-            
+            #st.subheader(f"{fruit_chosen} Nutritional Information")
+            st.write(f"**{fruit_chosen} Nutritional Information**")
             # Encode for special characters and spaces
             search_on_encoded = urllib.parse.quote(search_on)
             response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on_encoded}")
