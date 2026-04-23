@@ -1,7 +1,7 @@
-# Import python packages.
 import streamlit as st
 import pandas as pd
 import requests  
+import urllib.parse 
 from snowflake.snowpark.functions import col
 
 st.title(f":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
@@ -22,9 +22,10 @@ if ingredients_list:
       ingredients_string += fruit_chosen + ' '
       search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]      
       st.subheader(fruit_chosen + ' Nutritional Information')
-      response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on}")
+      search_on_encoded = urllib.parse.quote(search_on)
+      response = requests.get(f"https://my.smoothiefroot.com/api/fruit/{search_on_encoded}")
       
-      # Ensure we got a valid response before trying to display it
+      # Ensuring valid response before displaying it 
       if response.status_code == 200:
         sf_json = response.json()
         nutrition_data = sf_json.get('nutrition')
@@ -35,13 +36,11 @@ if ingredients_list:
         else:
             st.write(f"Nutrition data not available for {fruit_chosen}")
       else:
-          st.error(f"Could not find data for {fruit_chosen}")
-  
+          st.error(f"Could not find data for {fruit_chosen}(Search term: {search_on})")
+          
+    # writing onto ORDERS table SnowSQL
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order) values ('""" + ingredients_string + """', '"""+ name_on_order + """')"""
-    #st.write(my_insert_stmt)
     time_to_insert = st.button('Submit Order')
-
-    #button needed else every selection results in an extra 'orders'
     if time_to_insert: 
         session.sql(my_insert_stmt).collect()
         st.success("Your Smoothie is ordered, " + name_on_order + "!", icon = "✅")
